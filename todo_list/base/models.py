@@ -9,7 +9,7 @@ class Task(models.Model):
     description = models.TextField(null=True,blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    comleted = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)
 
     # class Meta:
     #     ordering = ['updated','created'] 

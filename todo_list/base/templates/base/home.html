@@ -2,10 +2,14 @@
 
 {%block content%}
 
+<a href="{%url 'add'%}">
+    Add Task
+    <br>
+</a>
 
 {%for task in tasks%}
 
-{{task.message}}
+{{task.message}}  <a href = "{% url 'task' task.id%}">View</a>
 <br>
 
 {%endfor%}
