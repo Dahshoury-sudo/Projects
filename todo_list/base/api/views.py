@@ -6,10 +6,6 @@ from rest_framework import status
 from django.contrib.auth import authenticate,login,logout
 from .serializers import TaskSerializer
 
-@api_view(['POST'])
-def test_api(request):
-    return Response({"ok": True})
-
 
 @api_view(['get'])
 def getroutes(request):

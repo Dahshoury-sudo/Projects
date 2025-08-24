@@ -8,6 +8,5 @@ urlpatterns = [
     path('getcurrentusertasks/',views.getcurrentusertasks),
     path('SignUp/',views.registeruser),
     path('login/',views.loginuser),
-    path('test/', views.test_api),
 
 ]
