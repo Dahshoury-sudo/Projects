@@ -11,6 +11,8 @@ class Task(models.Model):
     updated = models.DateTimeField(auto_now=True)
     completed = models.BooleanField(default=False)
 
+    USERNAME_FIELD = 'email'
+
     # class Meta:
     #     ordering = ['updated','created'] 
 

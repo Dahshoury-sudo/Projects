@@ -28,3 +28,13 @@ def showtask(request,pk):
     task = Task.objects.get(id=pk)
     context = {'task':task}
     return render(request,'base/task.html',context)
+
+
+def deletetask(request,pk):
+    task = Task.objects.get(id=pk)
+    if request.method == 'POST':
+        # task.delete()
+        task.completed = True
+        return redirect('home')
+    context = {'obj':task}
+    return render(request,'base/delete.html',context)
