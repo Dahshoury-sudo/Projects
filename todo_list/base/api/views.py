@@ -1,10 +1,15 @@
 from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
-from base.models import Task
+from base.models import Task,User
 from rest_framework import status
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from .serializers import TaskSerializer
+
+@api_view(['POST'])
+def test_api(request):
+    return Response({"ok": True})
+
 
 @api_view(['get'])
 def getroutes(request):
@@ -75,7 +80,7 @@ def registeruser(request):
     return Response({'message':'user created','user':{'id':user.id,'username':user.username,'email':user.email}},status=status.HTTP_201_CREATED)
 
 
-@api_view(['get','post'])
+@api_view(['GET','POST'])
 def loginuser(request):
     email = request.data.get('email')
     password = request.data.get('password')

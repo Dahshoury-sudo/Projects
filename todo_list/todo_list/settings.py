@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+AUTH_USER_MODEL = 'base.User'
+
 # Change This When u deploy the app
 # CSRF_TRUSTED_ORIGINS = [
 #     "https://djangolearn-production.up.railway.app"
