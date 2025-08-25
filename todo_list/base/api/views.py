@@ -18,7 +18,7 @@ def getroutes(request):
         'POST / api/login',
         'POST / api/tasks/add',
         'GET / api/task/:id',
-        'GET,POST / api/tasky/edit/:id',
+        'GET,PATCH / api/tasky/edit/:id',
         ]
 
     return Response(routes)
@@ -118,7 +118,7 @@ def sendtask(request,pk):
     serializer = TaskSerializer(task)
     return Response(serializer.data)
 
-@api_view(['GET','POST'])
+@api_view(['GET','PATCH'])
 def edittask(request,pk):
 
     if request.method == 'GET':
@@ -137,3 +137,12 @@ def edittask(request,pk):
 
         return Response({"message":"the task was edited successfully"})
 
+
+@api_view(['DELETE','GET'])
+def deletetask(request,pk):
+    task = Task.objects.get(id=pk)
+    if request.method == 'DELETE':
+        print("#"*50)
+        task.delete()
+        return Response({"message":"Task deleted successfully"})
+        # return Response({"message":"Task deleted successfully"},status=status.HTTP_200_OK)
