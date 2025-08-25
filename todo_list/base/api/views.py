@@ -14,6 +14,11 @@ def getroutes(request):
         'GET / api/getalltasks/',
         'GET / api/getusertask/:id',
         'GET / api/getcurrentusertasks',
+        'POST / api/SignUp',
+        'POST / api/login',
+        'POST / api/tasks/add',
+        'GET / api/task/:id',
+        'GET,POST / api/tasky/edit/:id',
         ]
 
     return Response(routes)
@@ -88,3 +93,47 @@ def loginuser(request):
         return Response({'message':'login successful'})
     else:
         return Response({'error':'either the email or password is wrong'},status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET','POST'])
+def addtask(request):
+    title = request.data.get('title')
+    description = request.data.get('description')
+
+    try:
+        task = Task.objects.create(
+            message = title,
+            description = description, 
+        )
+        return Response({"message":"task created"},status=status.HTTP_201_CREATED)
+
+    except:
+        return Response({"error":"Error occured try again"},status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def sendtask(request,pk):
+    task = Task.objects.get(id=pk)
+    serializer = TaskSerializer(task)
+    return Response(serializer.data)
+
+@api_view(['GET','POST'])
+def edittask(request,pk):
+
+    if request.method == 'GET':
+        task = Task.objects.get(id=pk)
+        serializer = TaskSerializer(task)
+        return Response(serializer.data)
+
+    else:
+        task = Task.objects.get(id=pk)
+
+        title = request.data.get('title')
+        description = request.data.get('description')
+
+        task.message = title
+        task.description = description
+
+        return Response({"message":"the task was edited successfully"})
+
