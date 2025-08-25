@@ -19,6 +19,8 @@ def getroutes(request):
         'POST / api/tasks/add',
         'GET / api/task/:id',
         'GET,PATCH / api/tasky/edit/:id',
+        'PATCH / api/tasky/complete/:id',
+        'DELETE / api/tasky/delete/:id',
         ]
 
     return Response(routes)
@@ -134,15 +136,24 @@ def edittask(request,pk):
 
         task.message = title
         task.description = description
+        task.save()
 
         return Response({"message":"the task was edited successfully"})
 
 
-@api_view(['DELETE','GET'])
+@api_view(['DELETE'])
 def deletetask(request,pk):
     task = Task.objects.get(id=pk)
+    
     if request.method == 'DELETE':
-        print("#"*50)
         task.delete()
-        return Response({"message":"Task deleted successfully"})
-        # return Response({"message":"Task deleted successfully"},status=status.HTTP_200_OK)
+        return Response({"message":"Task deleted successfully"},status=status.HTTP_204_NO_CONTENT)
+    
+
+@api_view(['PATCH'])
+def completetask(request,pk):
+    if request.method == 'PATCH':
+        task = Task.objects.get(id=pk)
+        task.completed = True
+        task.save()
+        return Response({"message":"task is now completed"},status=status.HTTP_200_OK)
