@@ -99,8 +99,8 @@ def loginuser(request):
         return Response({'error':'either the email or password is wrong'},status=status.HTTP_400_BAD_REQUEST)
 
 
-
-@api_view(['GET','POST'])
+@csrf_exempt
+@api_view(['POST'])
 def addtask(request):
     title = request.data.get('title')
     description = request.data.get('description')
@@ -123,6 +123,8 @@ def sendtask(request,pk):
     serializer = TaskSerializer(task)
     return Response(serializer.data)
 
+
+@csrf_exempt
 @api_view(['GET','PATCH'])
 def edittask(request,pk):
 
@@ -144,6 +146,7 @@ def edittask(request,pk):
         return Response({"message":"the task was edited successfully"})
 
 
+@csrf_exempt
 @api_view(['DELETE'])
 def deletetask(request,pk):
     task = Task.objects.get(id=pk)
