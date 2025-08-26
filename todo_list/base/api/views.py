@@ -109,6 +109,7 @@ def addtask(request):
         task = Task.objects.create(
             message = title,
             description = description, 
+            user = request.user
         )
         return Response({"message":"task created"},status=status.HTTP_201_CREATED)
 
