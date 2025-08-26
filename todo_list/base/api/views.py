@@ -28,14 +28,14 @@ def getroutes(request):
     return Response(routes)
 
 
-@api_view(['get','post','put','delete'])
+@api_view(['get'])
 def getalltasks(request):
     tasks = Task.objects.all()
     serializer = TaskSerializer(tasks,many=True)
     return Response(serializer.data)
 
 
-@api_view(['get','post','put','delete'])
+@api_view(['get'])
 def getusertasks(request,pk):
     user = User.objects.get(id=pk)
     tasks = user.task_set.all()
@@ -43,7 +43,7 @@ def getusertasks(request,pk):
     return Response(serializer.data)
 
 
-@api_view(['get','post','put','delete'])
+@api_view(['get'])
 def getcurrentusertasks(request):
     user = request.user
     tasks = user.task_set.all()
@@ -85,7 +85,7 @@ def registeruser(request):
     return Response({'message':'user created','user':{'id':user.id,'username':user.username,'email':user.email}},status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET','POST'])
+@api_view(['POST'])
 def loginuser(request):
     email = request.data.get('email')
     password = request.data.get('password')
@@ -100,10 +100,13 @@ def loginuser(request):
 
 
 
-@api_view(['GET','POST'])
+@api_view(['POST'])
 def addtask(request):
     title = request.data.get('title')
     description = request.data.get('description')
+
+    if not request.user.is_authenticated:
+        return Response({"message":"please login before adding any tasks"})
 
     try:
         task = Task.objects.create(
@@ -134,8 +137,11 @@ def edittask(request,pk):
     else:
         task = Task.objects.get(id=pk)
 
-        title = request.data.get('title')
-        description = request.data.get('description')
+        try:
+            title = request.data.get('title')
+            description = request.data.get('description')
+        except:
+            return Response({"message":"check you typed title,description"})
 
         task.message = title
         task.description = description
@@ -147,10 +153,8 @@ def edittask(request,pk):
 @api_view(['DELETE'])
 def deletetask(request,pk):
     task = Task.objects.get(id=pk)
-    
-    if request.method == 'DELETE':
-        task.delete()
-        return Response({"message":"Task deleted successfully"},status=status.HTTP_204_NO_CONTENT)
+    task.delete()
+    return Response({"message":"Task deleted successfully"},status=status.HTTP_204_NO_CONTENT)
     
 
 @api_view(['PATCH'])
