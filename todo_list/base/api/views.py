@@ -14,6 +14,13 @@ def getroutes(request):
         'GET / api/getalltasks/',
         'GET / api/getusertask/:id',
         'GET / api/getcurrentusertasks',
+        'POST / api/SignUp',
+        'POST / api/login',
+        'POST / api/tasks/add',
+        'GET / api/task/:id',
+        'GET,PATCH / api/tasky/edit/:id',
+        'PATCH / api/tasky/complete/:id',
+        'DELETE / api/tasky/delete/:id',
         ]
 
     return Response(routes)
@@ -88,3 +95,66 @@ def loginuser(request):
         return Response({'message':'login successful'})
     else:
         return Response({'error':'either the email or password is wrong'},status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET','POST'])
+def addtask(request):
+    title = request.data.get('title')
+    description = request.data.get('description')
+
+    try:
+        task = Task.objects.create(
+            message = title,
+            description = description, 
+            user = request.user
+        )
+        return Response({"message":"task created"},status=status.HTTP_201_CREATED)
+
+    except:
+        return Response({"error":"Error occured try again"},status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def sendtask(request,pk):
+    task = Task.objects.get(id=pk)
+    serializer = TaskSerializer(task)
+    return Response(serializer.data)
+
+@api_view(['GET','PATCH'])
+def edittask(request,pk):
+
+    if request.method == 'GET':
+        task = Task.objects.get(id=pk)
+        serializer = TaskSerializer(task)
+        return Response(serializer.data)
+
+    else:
+        task = Task.objects.get(id=pk)
+
+        title = request.data.get('title')
+        description = request.data.get('description')
+
+        task.message = title
+        task.description = description
+        task.save()
+
+        return Response({"message":"the task was edited successfully"})
+
+
+@api_view(['DELETE'])
+def deletetask(request,pk):
+    task = Task.objects.get(id=pk)
+    
+    if request.method == 'DELETE':
+        task.delete()
+        return Response({"message":"Task deleted successfully"},status=status.HTTP_204_NO_CONTENT)
+    
+
+@api_view(['PATCH'])
+def completetask(request,pk):
+    if request.method == 'PATCH':
+        task = Task.objects.get(id=pk)
+        task.completed = True
+        task.save()
+        return Response({"message":"task is now completed"},status=status.HTTP_200_OK)
