@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAdminUser
 from .permissions import IsArab
 
 @api_view(['get'])
-@permission_classes([IsAdminUser])
+# @permission_classes([IsAdminUser])
 def getroutes(request):
     routes = [
         'GET / api/',
