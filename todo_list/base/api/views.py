@@ -100,7 +100,7 @@ def loginuser(request):
 
 
 
-@api_view(['GET','POST'])
+@api_view(['POST'])
 def addtask(request):
     title = request.data.get('title')
     description = request.data.get('description')
@@ -109,7 +109,8 @@ def addtask(request):
         task = Task.objects.create(
             message = title,
             description = description, 
-            user = request.user
+            user = request.user,
+            completed = False
         )
         return Response({"message":"task created"},status=status.HTTP_201_CREATED)
 
