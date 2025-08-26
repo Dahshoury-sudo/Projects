@@ -1,13 +1,15 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from base.models import Task,User
 from rest_framework import status
 from django.contrib.auth import authenticate,login,logout
 from .serializers import TaskSerializer
-
+from rest_framework.permissions import IsAdminUser
+from .permissions import IsArab
 
 @api_view(['get'])
+@permission_classes([IsAdminUser])
 def getroutes(request):
     routes = [
         'GET / api/',
