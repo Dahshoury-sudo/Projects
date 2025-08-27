@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAdminUser
 from .permissions import IsArab
 
 @api_view(['get'])
-@permission_classes([IsAdminUser])
+# @permission_classes([IsAdminUser])
 def getroutes(request):
     routes = [
         'GET / api/',
@@ -98,8 +98,6 @@ def loginuser(request):
     else:
         return Response({'error':'either the email or password is wrong'},status=status.HTTP_400_BAD_REQUEST)
 
-
-
 @api_view(['POST'])
 def addtask(request):
     title = request.data.get('title')
@@ -125,6 +123,7 @@ def sendtask(request,pk):
     task = Task.objects.get(id=pk)
     serializer = TaskSerializer(task)
     return Response(serializer.data)
+
 
 @api_view(['GET','PATCH'])
 def edittask(request,pk):
