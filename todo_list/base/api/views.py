@@ -27,14 +27,14 @@ def getroutes(request):
 
     return Response(routes)
 
-
+@csrf_exempt
 @api_view(['get','post','put','delete'])
 def getalltasks(request):
     tasks = Task.objects.all()
     serializer = TaskSerializer(tasks,many=True)
     return Response(serializer.data)
 
-
+@csrf_exempt
 @api_view(['get','post','put','delete'])
 def getusertasks(request,pk):
     user = User.objects.get(id=pk)
@@ -42,7 +42,7 @@ def getusertasks(request,pk):
     serializer = TaskSerializer(tasks,many=True)
     return Response(serializer.data)
 
-
+@csrf_exempt
 @api_view(['get','post','put','delete'])
 def getcurrentusertasks(request):
     user = request.user
@@ -50,7 +50,7 @@ def getcurrentusertasks(request):
     serializer = TaskSerializer(tasks,many=True)
     return Response(serializer.data)
 
-
+@csrf_exempt
 @api_view(['get','POST'])
 def registeruser(request):
     if request.method == 'GET':
@@ -85,6 +85,7 @@ def registeruser(request):
     return Response({'message':'user created','user':{'id':user.id,'username':user.username,'email':user.email}},status=status.HTTP_201_CREATED)
 
 
+@csrf_exempt
 @api_view(['GET','POST'])
 def loginuser(request):
     email = request.data.get('email')
@@ -98,6 +99,8 @@ def loginuser(request):
     else:
         return Response({'error':'either the email or password is wrong'},status=status.HTTP_400_BAD_REQUEST)
 
+
+@csrf_exempt
 @api_view(['POST'])
 def addtask(request):
     title = request.data.get('title')
@@ -117,7 +120,7 @@ def addtask(request):
     except:
         return Response({"error":"Error occured try again"},status=status.HTTP_400_BAD_REQUEST)
 
-
+@csrf_exempt
 @api_view(['GET'])
 def sendtask(request,pk):
     task = Task.objects.get(id=pk)
@@ -125,6 +128,8 @@ def sendtask(request,pk):
     return Response(serializer.data)
 
 
+
+@csrf_exempt
 @api_view(['GET','PATCH'])
 def edittask(request,pk):
 
@@ -146,6 +151,7 @@ def edittask(request,pk):
         return Response({"message":"the task was edited successfully"})
 
 
+@csrf_exempt
 @api_view(['DELETE'])
 def deletetask(request,pk):
     task = Task.objects.get(id=pk)
@@ -154,7 +160,7 @@ def deletetask(request,pk):
         task.delete()
         return Response({"message":"Task deleted successfully"},status=status.HTTP_204_NO_CONTENT)
     
-
+@csrf_exempt
 @api_view(['PATCH'])
 def completetask(request,pk):
     if request.method == 'PATCH':
