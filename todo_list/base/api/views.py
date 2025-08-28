@@ -109,7 +109,7 @@ def loginuser(request):
 
 
 
-@api_view(['POST'])
+@api_view(['POST','GET'])
 def addtask(request):
     title = request.data.get('title')
     description = request.data.get('description')
