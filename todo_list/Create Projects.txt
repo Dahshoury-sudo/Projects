@@ -1,0 +1,15 @@
+django-admin startproject <name1>
+
+cd <name1>
+
+python manage.py startapp <name2>
+
+go into settings.py and into INSTALLED_APPS type --->
+'<name2.apps.BaseConfig>', so django knows about the url file in the app scope
+
+create app urls.py and go to general urls.py and import include() and path() and connect the general urls to the app urls one
+
+go into settings.py and into TEMPLATES type --->
+BASE_DIR / 'templates', so django knows about the templates file in app scope ..... NOTE: make <name2> folder inside the app scope templates and store the templates in it 
+
+admin.site.register() to register a model in admin panel
