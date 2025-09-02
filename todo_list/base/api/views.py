@@ -114,8 +114,6 @@ def addtask(request):
     title = request.data.get('title')
     description = request.data.get('description')
     user_id = request.data.get('user_id')
-    if not request.user.is_authenticated:
-        return Response({"messsge":"You are not loged in ya mahmoud aw el csrftoken msh bytb3t"})
 
     try:
         task = Task.objects.create(
