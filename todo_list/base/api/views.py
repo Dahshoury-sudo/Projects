@@ -103,7 +103,7 @@ def loginuser(request):
 
     if user is not None:
         login(request,user)
-        return Response({'message':'login successful'})
+        return Response({'message':'login successful','user_id':user.id})
     else:
         return Response({'error':'either the email or password is wrong'},status=status.HTTP_400_BAD_REQUEST)
 
@@ -113,6 +113,7 @@ def loginuser(request):
 def addtask(request):
     title = request.data.get('title')
     description = request.data.get('description')
+    user_id = request.data.get('user_id')
     if not request.user.is_authenticated:
         return Response({"messsge":"You are not loged in ya mahmoud aw el csrftoken msh bytb3t"})
 
@@ -120,7 +121,7 @@ def addtask(request):
         task = Task.objects.create(
             message = title,
             description = description, 
-            user = request.user,
+            user = User.objects.get(id=user_id),
             completed = False
         )
         return Response({"message":"task created"},status=status.HTTP_201_CREATED)
