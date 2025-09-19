@@ -13,6 +13,5 @@ urlpatterns = [
     path('tasky/edit/<str:pk>',views.edittask),
     path('tasky/delete/<str:pk>',views.deletetask),
     path('tasky/complete/<str:pk>',views.completetask),
-    path('csrf/',views.getcsrf) 
 
 ]
