@@ -31,32 +31,12 @@ def getroutes(request):
 
 
 @api_view(['GET'])
-def getcsrf(request):
-    token = get_token(request)
-    return Response({"token":token})
-
-
-@api_view(['get','post','put','delete'])
-def getalltasks(request):
-    tasks = Task.objects.all()
-    serializer = TaskSerializer(tasks,many=True)
-    return Response(serializer.data)
-
-
-@api_view(['get','post','put','delete'])
-def getusertasks(request,pk):
-    user = User.objects.get(id=pk)
-    tasks = user.task_set.all()
-    serializer = TaskSerializer(tasks,many=True)
-    return Response(serializer.data)
-
-
-@api_view(['get','post','put','delete'])
-def getcurrentusertasks(request):
+def getusertasks(request):
+    task_id = request.data.get('task_id')
     user = request.user
     tasks = user.task_set.all()
     serializer = TaskSerializer(tasks,many=True)
-    return Response(serializer.data)
+    return Response({"task":serializer.data})
 
 
 @api_view(['POST'])
@@ -95,13 +75,13 @@ def registeruser(request):
 def addtask(request):
     title = request.data.get('title')
     description = request.data.get('description')
-    user_id = request.data.get('user_id')
+    user = request.user
 
     try:
         task = Task.objects.create(
-            message = title,
+            title = title,
             description = description, 
-            user = User.objects.get(id=user_id),
+            user = user,
             completed = False
         )
         return Response({"message":"task created"},status=status.HTTP_201_CREATED)
@@ -119,17 +99,15 @@ def gettask(request):
 
 
 
-
 @api_view(['GET','PATCH'])
 def edittask(request):
     task_id = request.data.get('task_id')
+    task = Task.objects.get(id=task_id)
     if request.method == 'GET':
-        task = Task.objects.get(id=task_id)
         serializer = TaskSerializer(task)
         return Response({"task":serializer.data})
 
     else:
-        task = Task.objects.get(id=task_id)
         title = request.data.get('title')
         description = request.data.get('description')
         task.title = title
@@ -148,7 +126,7 @@ def deletetask(request):
     
 
 @api_view(['PATCH'])
-def completetask(request,pk):
+def completetask(request):
     task_id = request.data.get('task_id')
     task = Task.objects.get(id=task_id)
     task.completed = True

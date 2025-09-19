@@ -9,7 +9,7 @@
 
 {%for task in tasks%}
 
-{{task.message}} ----------{{task.completed}}  <a href = "{% url 'task' task.id%}">View </a>
+{{task.title}} ----------{{task.completed}}  <a href = "{% url 'task' task.id%}">View </a>
 <a href = "{%url 'delete-task' task.id%}">Delete </a>
 <br>
 

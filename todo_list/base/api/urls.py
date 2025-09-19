@@ -10,8 +10,8 @@ urlpatterns = [
     path('task/all/',views.getusertasks),
     path('task/add/',views.addtask),
     path('task/get/',views.gettask),
-    path('task/add/',views.edittask),
-    path('tasky/delete/',views.deletetask),
-    path('tasky/complete/',views.completetask),
+    path('task/edit/',views.edittask),
+    path('task/delete/',views.deletetask),
+    path('task/complete/',views.completetask),
 
 ]
