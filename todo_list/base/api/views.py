@@ -59,11 +59,9 @@ def getcurrentusertasks(request):
     return Response(serializer.data)
 
 
-@api_view(['get','POST'])
+@api_view(['POST'])
 def registeruser(request):
-    if request.method == 'GET':
-        return Response({'message': 'Use POST to register a new user'})
-    
+
     username = request.data.get('username').strip()
     fname = request.data.get('fname').strip()
     lname = request.data.get('lname').strip()
@@ -90,26 +88,10 @@ def registeruser(request):
         password = password1,
     )
 
-    return Response({'message':'user created','user':{'id':user.id,'username':user.username,'email':user.email}},status=status.HTTP_201_CREATED)
+    return Response({'message':'user created successfully'},status=status.HTTP_201_CREATED)
 
 
-
-@api_view(['GET','POST'])
-def loginuser(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-
-    user = authenticate(request,email=email,password=password)
-
-    if user is not None:
-        login(request,user)
-        return Response({'message':'login successful','user_id':user.id})
-    else:
-        return Response({'error':'either the email or password is wrong'},status=status.HTTP_400_BAD_REQUEST)
-
-
-
-@api_view(['POST','GET'])
+@api_view(['POST'])
 def addtask(request):
     title = request.data.get('title')
     description = request.data.get('description')
@@ -129,8 +111,9 @@ def addtask(request):
 
 
 @api_view(['GET'])
-def sendtask(request,pk):
-    task = Task.objects.get(id=pk)
+def gettask(request):
+    task_id = request.data.get('task_id')
+    task = Task.objects.get(id=task_id)
     serializer = TaskSerializer(task)
     return Response(serializer.data)
 
@@ -138,40 +121,36 @@ def sendtask(request,pk):
 
 
 @api_view(['GET','PATCH'])
-def edittask(request,pk):
-
+def edittask(request):
+    task_id = request.data.get('task_id')
     if request.method == 'GET':
-        task = Task.objects.get(id=pk)
+        task = Task.objects.get(id=task_id)
         serializer = TaskSerializer(task)
-        return Response(serializer.data)
+        return Response({"task":serializer.data})
 
     else:
-        task = Task.objects.get(id=pk)
-
+        task = Task.objects.get(id=task_id)
         title = request.data.get('title')
         description = request.data.get('description')
-
-        task.message = title
+        task.title = title
         task.description = description
         task.save()
-
-        return Response({"message":"the task was edited successfully"})
+        return Response({"message":"the task was edited successfully"},status=status.HTTP_200_OK)
 
 
 
 @api_view(['DELETE'])
-def deletetask(request,pk):
-    task = Task.objects.get(id=pk)
-    
-    if request.method == 'DELETE':
-        task.delete()
-        return Response({"message":"Task deleted successfully"},status=status.HTTP_204_NO_CONTENT)
+def deletetask(request):
+    task_id = request.data.get('task_id')
+    task = Task.objects.get(id=task_id)
+    task.delete()
+    return Response({"message":"Task deleted successfully"},status=status.HTTP_200_OK)
     
 
 @api_view(['PATCH'])
 def completetask(request,pk):
-    if request.method == 'PATCH':
-        task = Task.objects.get(id=pk)
-        task.completed = True
-        task.save()
-        return Response({"message":"task is now completed"},status=status.HTTP_200_OK)
+    task_id = request.data.get('task_id')
+    task = Task.objects.get(id=task_id)
+    task.completed = True
+    task.save()
+    return Response({"message":"task is now completed"},status=status.HTTP_200_OK)

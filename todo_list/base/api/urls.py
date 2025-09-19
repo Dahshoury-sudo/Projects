@@ -1,17 +1,17 @@
 from django.urls import path
 from . import views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('',views.getroutes),
-    path('getalltasks/',views.getalltasks),
-    path('getusertasks/<str:pk>',views.getusertasks),
-    path('getcurrentusertasks/',views.getcurrentusertasks),
-    path('SignUp/',views.registeruser),
-    path('login/',views.loginuser),
-    path('tasks/add/',views.addtask),
-    path('task/<str:pk>',views.sendtask),
-    path('tasky/edit/<str:pk>',views.edittask),
-    path('tasky/delete/<str:pk>',views.deletetask),
-    path('tasky/complete/<str:pk>',views.completetask),
+    path('signup/',views.registeruser),
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('task/all/',views.getusertasks),
+    path('task/add/',views.addtask),
+    path('task/get/',views.gettask),
+    path('task/add/',views.edittask),
+    path('tasky/delete/',views.deletetask),
+    path('tasky/complete/',views.completetask),
 
 ]
