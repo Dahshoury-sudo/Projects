@@ -2,15 +2,10 @@
 
 {%block content%}
 
-<a href="{%url 'add'%}">
-    Add Task
-    <br>
-</a>
 
 {%for task in tasks%}
 
-{{task.title}} ----------{{task.completed}}  <a href = "{% url 'task' task.id%}">View </a>
-<a href = "{%url 'delete-task' task.id%}">Delete </a>
+{{task.title}} ------------- {{task.description}} ------------{{task.completed}}
 <br>
 
 {%endfor%}

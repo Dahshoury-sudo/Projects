@@ -9,25 +9,31 @@ from .serializers import TaskSerializer
 from rest_framework.permissions import IsAdminUser
 from .permissions import IsArab
 
-@api_view(['get'])
-# @permission_classes([IsAdminUser])
-def getroutes(request):
-    routes = [
-        'GET / api/',
-        'GET / api/getalltasks/',
-        'GET / api/getusertask/:id',
-        'GET / api/getcurrentusertasks',
-        'POST / api/SignUp',
-        'POST / api/login',
-        'POST / api/tasks/add',
-        'GET / api/task/:id',
-        'GET,PATCH / api/tasky/edit/:id',
-        'PATCH / api/tasky/complete/:id',
-        'DELETE / api/tasky/delete/:id',
-        'GET / api/csrf/'
-        ]
 
-    return Response(routes)
+@api_view(['POST'])
+def registeruser(request):
+
+    username = request.data.get('username').strip()
+    email = request.data.get('email').strip()
+    password1 = request.data.get('password1').strip()
+    password2 = request.data.get('password2').strip()
+
+    if password1 != password2:
+        return Response({'error':'passwords does not match'})
+    
+    if User.objects.filter(username=username).exists():
+        return Response({'error':'username already exist'},status = status.HTTP_400_BAD_REQUEST)
+
+    if User.objects.filter(email=email).exists():
+        return Response({'error':'email already exist'},status= status.HTTP_400_BAD_REQUEST)
+    
+    user = User.objects.create_user(
+        username = username,
+        email = email,
+        password = password1,
+    )
+
+    return Response({'message':'user created successfully'},status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET'])
@@ -37,38 +43,6 @@ def getusertasks(request):
     tasks = user.task_set.all()
     serializer = TaskSerializer(tasks,many=True)
     return Response({"task":serializer.data})
-
-
-@api_view(['POST'])
-def registeruser(request):
-
-    username = request.data.get('username').strip()
-    fname = request.data.get('fname').strip()
-    lname = request.data.get('lname').strip()
-    email = request.data.get('email').strip()
-    password1 = request.data.get('password1').strip()
-    password2 = request.data.get('password2').strip()
-
-    if password1 != password2:
-        return Response({'error':'passwords does not match'})
-    
-    if User.objects.filter(username=username).exists():
-        print("from user")
-        return Response({'error':'username already exist'},status = status.HTTP_400_BAD_REQUEST)
-
-    if User.objects.filter(email=email).exists():
-        print("from email")
-        return Response({'error':'email already exist'},status= status.HTTP_400_BAD_REQUEST)
-    
-    user = User.objects.create_user(
-        username = username,
-        first_name = fname,
-        last_name = lname,
-        email = email,
-        password = password1,
-    )
-
-    return Response({'message':'user created successfully'},status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -98,7 +72,6 @@ def gettask(request):
     return Response(serializer.data)
 
 
-
 @api_view(['GET','PATCH'])
 def edittask(request):
     task_id = request.data.get('task_id')
@@ -114,7 +87,6 @@ def edittask(request):
         task.description = description
         task.save()
         return Response({"message":"the task was edited successfully"},status=status.HTTP_200_OK)
-
 
 
 @api_view(['DELETE'])
