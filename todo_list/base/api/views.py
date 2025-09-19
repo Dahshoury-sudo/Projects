@@ -4,14 +4,16 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from base.models import Task,User
 from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate,login,logout
 from .serializers import TaskSerializer
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser,AllowAny,IsAuthenticated
 from .permissions import IsArab
 
 
 @api_view(['POST'])
-def registeruser(request):
+@permission_classes([AllowAny])
+def register(request):
 
     username = request.data.get('username').strip()
     email = request.data.get('email').strip()
@@ -36,16 +38,32 @@ def registeruser(request):
     return Response({'message':'user created successfully'},status=status.HTTP_201_CREATED)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    refresh_token = request.data.get('refresh')
+    if not refresh_token:
+        return Response({"error": "Refresh token required"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        return Response({"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
+    except Exception:
+        return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getusertasks(request):
-    task_id = request.data.get('task_id')
     user = request.user
     tasks = user.task_set.all()
     serializer = TaskSerializer(tasks,many=True)
-    return Response({"task":serializer.data})
+    return Response({"tasks":serializer.data})
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def addtask(request):
     title = request.data.get('title')
     description = request.data.get('description')
@@ -65,6 +83,7 @@ def addtask(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def gettask(request):
     task_id = request.data.get('task_id')
     task = Task.objects.get(id=task_id)
@@ -73,6 +92,7 @@ def gettask(request):
 
 
 @api_view(['GET','PATCH'])
+@permission_classes([IsAuthenticated])
 def edittask(request):
     task_id = request.data.get('task_id')
     task = Task.objects.get(id=task_id)
@@ -90,6 +110,7 @@ def edittask(request):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def deletetask(request):
     task_id = request.data.get('task_id')
     task = Task.objects.get(id=task_id)
@@ -98,6 +119,7 @@ def deletetask(request):
     
 
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def completetask(request):
     task_id = request.data.get('task_id')
     task = Task.objects.get(id=task_id)
